@@ -21,14 +21,28 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 sh 'npm test -- --watchAll=false --ci --reporters=default --reporters=jest-junit' // Genera reporte JUnit
-            }            post {
+            }
+            post {
                 always {
                     junit 'junit.xml' // Publica reporte en Jenkins
                     archiveArtifacts artifacts: 'junit.xml', allowEmptyArchive: true
                 }
             }
-        }     }     // Post-actions (opcional)    post {        always {            emailext (                subject: "Pipeline ${currentBuild.result}: ucp-app-react #${env.BUILD_NUMBER}",                body: """                    Estado: ${currentBuild.result}
+        }
+    }
+
+    // Post-actions (opcional)
+    post {
+        always {
+            emailext (
+                subject: "Pipeline ${currentBuild.result}: ucp-app-react #${env.BUILD_NUMBER}",
+                body: """
+                    Estado: ${currentBuild.result}
                     URL Build: ${env.BUILD_URL}
                     Detalles de Pruebas: ${env.BUILD_URL}testReport/
-                """,                to: 'tu-email@example.com' // Reemplaza con tu email
-            )        }    }  } 
+                """,
+                to: 'tu-email@example.com' // Reemplaza con tu email
+            )
+        }
+    }
+}
